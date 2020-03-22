@@ -3,7 +3,7 @@ Data on confirmed COVID-19 cases in Scotland by Health board taken from the Web 
 
 
 ```python
-pip install html2text lxml matplotlib pandas word2number xarray 
+pip install html2text geopandas lxml matplotlib pandas word2number xarray 
 ```
 
     Requirement already satisfied: html2text in c:\programdata\anaconda3\lib\site-packages (2020.1.16)
@@ -30,6 +30,7 @@ from pathlib import Path
 from html2text import html2text
 from dateutil import parser
 from word2number import w2n
+import geopandas as gpd
 import pandas as pd
 import urllib
 import xarray as xr
@@ -155,6 +156,18 @@ class ScotlandCOVID19Results():
 
 
 ```python
+8679-7886
+```
+
+
+
+
+    793
+
+
+
+
+```python
 results = []
 for date in range(20200306,20200320):
     results.append(ScotlandCOVID19.from_date(str(date)))
@@ -199,7 +212,7 @@ results.append(ScotlandCOVID19.from_latest_government())
 ```
 
     Latest
-    21 March 2020
+    22 March 2020
     
 
 
@@ -254,328 +267,81 @@ differences = pd.DataFrame(count_difference.values - wiki_data[4:].values, index
 
 
 ```python
-differences
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>Health Board</th>
-      <th>Ayrshire and Arran</th>
-      <th>Borders</th>
-      <th>Dumfries and Galloway</th>
-      <th>Fife</th>
-      <th>Forth Valley</th>
-      <th>Grampian</th>
-      <th>Greater Glasgow and Clyde</th>
-      <th>Highland</th>
-      <th>Lanarkshire</th>
-      <th>Lothian</th>
-      <th>Shetland</th>
-      <th>Tayside</th>
-    </tr>
-    <tr>
-      <th>date</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2020-03-06</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>-2</td>
-      <td>-1</td>
-      <td>-1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>-1</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-07</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-08</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-09</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-10</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-11</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-12</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-13</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>-2</td>
-    </tr>
-    <tr>
-      <th>2020-03-14</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-15</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-16</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-17</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>-4</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>4</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-18</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>-3</td>
-    </tr>
-    <tr>
-      <th>2020-03-19</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>-2</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-20</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2020-03-21</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```python
 all_results.counts.iloc[-1]
 ```
 
 
 
 
-    Health Board
-    Ayrshire and Arran            21
-    Borders                       10
-    Dumfries and Galloway         13
-    Fife                          13
-    Forth Valley                  27
-    Grampian                      20
-    Greater Glasgow and Clyde    110
+    Health board
+    Ayrshire and Arran            25
+    Borders                       11
+    Dumfries and Galloway         16
+    Fife                          16
+    Forth Valley                  30
+    Grampian                      23
+    Greater Glasgow and Clyde    130
     Highland                       8
     Lanarkshire                   49
-    Lothian                       44
+    Lothian                       46
     Shetland                      24
-    Tayside                       34
-    Name: 2020-03-21 00:00:00, dtype: int32
+    Tayside                       38
+    Name: 2020-03-22 00:00:00, dtype: int32
+
+
+
+
+```python
+all_results.counts.diff().iloc[-1]
+```
+
+
+
+
+    Health board
+    Ayrshire and Arran            4.0
+    Borders                       1.0
+    Dumfries and Galloway         3.0
+    Fife                          3.0
+    Forth Valley                  3.0
+    Grampian                      3.0
+    Greater Glasgow and Clyde    20.0
+    Highland                      0.0
+    Lanarkshire                   0.0
+    Lothian                       2.0
+    Shetland                      0.0
+    Tayside                       4.0
+    Name: 2020-03-22 00:00:00, dtype: float64
+
+
+
+
+```python
+all_results.tests.diff()
+```
+
+
+
+
+    date
+    2020-03-06      NaN
+    2020-03-07    155.0
+    2020-03-08    277.0
+    2020-03-09    144.0
+    2020-03-10    133.0
+    2020-03-11     82.0
+    2020-03-12    576.0
+    2020-03-13    422.0
+    2020-03-14    401.0
+    2020-03-15    525.0
+    2020-03-16    655.0
+    2020-03-17    351.0
+    2020-03-18    845.0
+    2020-03-19    681.0
+    2020-03-20    778.0
+    2020-03-21    709.0
+    2020-03-22    420.0
+    Name: Tests concluded, dtype: float64
 
 
 
@@ -646,27 +412,6 @@ all_results.counts.to_csv('daily_counts_by_health_board.csv')
 
 
 ```python
-covid_dataset = xr.load_dataset('Scotland_COVID-19.nc')
-```
-
-
-```python
-covid_dataset.tests.plot(figsize=(12,8))
-```
-
-
-
-
-    [<matplotlib.lines.Line2D at 0x22acd1c70f0>]
-
-
-
-
-![png](output_21_1.png)
-
-
-
-```python
 print("Daily increase in number of test concluded")
 all_results.tests.diff()[1:].astype('int')
 ```
@@ -698,23 +443,18 @@ all_results.tests.diff()[1:].astype('int')
 all_results.deaths.plot(color='r', title='Total number of deaths of patients who tested positive for COVID-19', grid=True, figsize=(12, 8))
 
 ```python
-
-```
-
-
-```python
 all_results.counts.plot(figsize=(12,8), title='COVID-19 Confirmed cases by Health board Scotland', grid=True)
 ```
 
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x22acc98e080>
+    <matplotlib.axes._subplots.AxesSubplot at 0x22ad7b3d358>
 
 
 
 
-![png](output_25_1.png)
+![png](output_24_1.png)
 
 
 
@@ -725,12 +465,12 @@ all_results.counts.sum(axis=1).plot(figsize=(12,8), title='COVID-19 all Confirme
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x22acd339278>
+    <matplotlib.axes._subplots.AxesSubplot at 0x22ae9c64080>
 
 
 
 
-![png](output_26_1.png)
+![png](output_25_1.png)
 
 
 
@@ -762,6 +502,41 @@ all_results.counts.sum(axis=1).diff()
     2020-03-19    39.0
     2020-03-20    56.0
     2020-03-21    51.0
+    2020-03-22    43.0
+    dtype: float64
+
+
+
+
+```python
+print("Percentage of positive test daily")
+(all_results.counts.sum(axis=1).diff()/all_results.tests.diff() * 100)
+```
+
+    Percentage of positive test daily
+    
+
+
+
+
+    date
+    2020-03-06          NaN
+    2020-03-07     3.225806
+    2020-03-08     0.722022
+    2020-03-09     3.472222
+    2020-03-10     3.007519
+    2020-03-11    10.975610
+    2020-03-12     4.166667
+    2020-03-13     5.924171
+    2020-03-14     8.977556
+    2020-03-15     6.095238
+    2020-03-16     2.748092
+    2020-03-17     6.837607
+    2020-03-18     3.786982
+    2020-03-19     5.726872
+    2020-03-20     7.197943
+    2020-03-21     7.193230
+    2020-03-22    10.238095
     dtype: float64
 
 
@@ -794,6 +569,7 @@ round(all_results.counts.sum(axis=1).diff()/all_results.counts.sum(axis=1) * 100
     2020-03-19    14.66
     2020-03-20    17.39
     2020-03-21    13.67
+    2020-03-22    10.34
     dtype: float64
 
 
@@ -1184,6 +960,8 @@ all_results
 
 
 
+## Linking Council areas to Health Boards for population statistics purposes
+
 
 ```python
 tables = pd.read_html('https://en.wikipedia.org/wiki/Subdivisions_of_Scotland')
@@ -1550,11 +1328,6 @@ council_areas = council_areas.loc[council_areas.index.sort_values()]
 
 
 ```python
-
-```
-
-
-```python
 health_board_to_council.set_index(health_board_to_council.columns[0], inplace=True)
 ```
 
@@ -1574,13 +1347,12 @@ health_board_to_council = health_board_to_council.council_areas.str.rsplit(' and
 health_board_to_council.iloc[4].name = health_board_to_council.iloc[4].name.rsplit(' ', 5)[0]
 ```
 
+Splitting on final ' and ' above create issues for the following areas
+
 
 ```python
+# Handle Perth and Kinross
 health_board_to_council.loc['Tayside'].iloc[1] = health_board_to_council.loc['Tayside'].iloc[1].split(' and ')[0]
-```
-
-
-```python
 health_board_to_council.loc['Tayside'].iloc[-1] = 'Perth and Kinross'
 ```
 
@@ -1602,12 +1374,15 @@ health_board_to_council.loc['Dumfries and Galloway'][-1] = None
 
 
 ```python
+# Use council area naming
 health_board_to_council.iloc[-1][0] = 'Na h-Eileanan Siar (Western Isles)'
 ```
 
 
 ```python
-def get_population_for_health_board():
+def get_population_for_health_board(health_board_to_council: pd.DataFrame,
+                                    council_areas: pd.DataFrame) -> pd.Series:
+    """Sum population for council areas that make up each health board"""
     population_health_boards = {}
     for health_board, councils in health_board_to_council.iterrows():
         population_total = 0
@@ -1620,33 +1395,8 @@ def get_population_for_health_board():
 
 
 ```python
-scottish_population_mid_2018_estimate = get_population_for_health_board().sum()
+scottish_population_mid_2018_estimate = get_population_for_health_board(health_board_to_council, council_areas).sum()
 ```
-
-
-```python
-all_results.counts.iloc[-1]
-```
-
-
-
-
-    Health Board
-    Ayrshire and Arran            21
-    Borders                       10
-    Dumfries and Galloway         13
-    Fife                          13
-    Forth Valley                  27
-    Grampian                      20
-    Greater Glasgow and Clyde    110
-    Highland                       8
-    Lanarkshire                   49
-    Lothian                       44
-    Shetland                      24
-    Tayside                       34
-    Name: 2020-03-21 00:00:00, dtype: int32
-
-
 
 
 ```python
@@ -1681,6 +1431,7 @@ health_board_populations
 
 
 ```python
+# Drop the Forth Valley suffix
 health_board_to_council.rename({health_board_to_council.index[4]: health_board_to_council.index[4].rsplit(' ', 5)[0]}, inplace=True)
 ```
 
@@ -1691,12 +1442,13 @@ last_counts = all_results.counts.iloc[-1]
 
 
 ```python
+# Drop the Forth Valley suffix
 health_board_populations.rename({health_board_populations.index[4]: health_board_populations.index[4].rsplit(' ', 5)[0]}, inplace=True)
 ```
 
 
 ```python
-percentage_confirmed_cases_by_health_board_population = (last_counts/health_board_populations*100).sort_values(ascending=False)
+percentage_confirmed_cases_by_health_board_population = (last_counts / health_board_populations * 100).sort_values(ascending=False)
 ```
 
 
@@ -1724,3 +1476,84 @@ percentage_confirmed_cases_by_health_board_population
     dtype: float64
 
 
+
+
+```python
+health_board_to_council.to_csv('health_board_to_council.csv')
+```
+
+
+```python
+council_areas.to_csv('council_areas.csv')
+```
+
+## Reading Scottish Health Board polygons created from Ordnance Survey Boundary line Open Data
+
+
+```python
+health_boards = gpd.read_file('scottish_health_boards.gpkg', layer='scottish_health_boards')
+```
+
+
+```python
+health_boards.set_index('Name', inplace=True)
+```
+
+
+```python
+health_boards.index.sort_values()
+```
+
+
+
+
+    Index(['Aberdeen City', 'Clackmannanshire', 'Dumfries and Galloway',
+           'Dundee City', 'East Ayrshire', 'East Dunbartonshire', 'Fife',
+           'Highland', 'Midlothian', 'Na h-Eileanan an Iar', 'Orkney Islands',
+           'Scottish Borders', 'Shetland Islands', 'South Lanarkshire'],
+          dtype='object', name='Name')
+
+
+
+
+```python
+# Ensure naming is consistent with names used on Scottish Government COVID-19 page
+health_boards.rename({
+    'Aberdeen City': 'Grampian',
+    'Clackmannanshire': 'Forth Valley',
+    'Dundee City': 'Tayside',
+    'East Ayrshire': 'Ayrshire and Arran',
+    'East Dunbartonshire': 'Greater Glasgow and Clyde',
+    'Midlothian': 'Lothian',
+    'Na h-Eileanan an Iar': 'Western Isles (Eileanan Siar)',
+    'Orkney Islands': 'Orkney',
+    'Scottish Borders': 'Borders',
+    'Shetland Islands': 'Shetland',
+    'South Lanarkshire': 'Lanarkshire'
+}, inplace=True)
+```
+
+
+```python
+health_board_geo_series = health_boards.geometry
+```
+
+
+```python
+health_board_geo_series = health_board_geo_series[health_board_geo_series.index.sort_values()]
+```
+
+
+```python
+health_board_geo_df = gpd.GeoDataFrame(all_results.counts.iloc[-1], geometry=health_board_geo_series.geometry)
+```
+
+
+```python
+health_board_geo_df.rename({health_board_geo_df.columns[0]: str(health_board_geo_df.columns[0])}, axis=1, inplace=True)
+```
+
+
+```python
+health_board_geo_df.to_file('scottish_health_board_counts_20200322.gpkg', driver='GPKG')
+```
