@@ -118,3 +118,28 @@ class ScotlandCOVID19Results():
         dataset['deaths'] = xr.DataArray(self.deaths)
         dataset['tests'] = xr.DataArray(self.tests)
         dataset.to_netcdf(file_name)
+
+        
+def calculate_percentage_increases(covid_data: pd.DataFrame) -> pd.DataFrame:
+    """Approach gives 100% for first confirmed case, not ideal"""
+    percentage_increases = []
+    for index in range(1, len(covid_data)):
+        percentage_increases.append(round(
+            (covid_data.iloc[index] - covid_data.iloc[index - 1, :]) /covid_data.iloc[index, :] * 100 ,2))
+    percentage_increases = pd.concat(percentage_increases, axis=1)
+    percentage_increases.columns = covid_data.index[1:]
+    percentage_increases.columns.name = 'Daily % increase'
+    percentage_increases.index.name = 'Health Board'
+    return percentage_increases
+
+def get_population_for_health_board(health_board_to_council: pd.DataFrame,
+                                    council_areas: pd.DataFrame) -> pd.Series:
+    """Sum population for council areas that make up each health board"""
+    population_health_boards = {}
+    for health_board, councils in health_board_to_council.iterrows():
+        population_total = 0
+        for council in councils:
+            if council is not None:
+                population_total += int(council_areas.loc[council][1])
+        population_health_boards[health_board] = population_total
+    return pd.Series(population_health_boards, name='Population mid 2018 ONS estimate')
