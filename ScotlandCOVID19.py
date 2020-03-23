@@ -4,7 +4,7 @@ import urllib
 from html2text import html2text
 from word2number import w2n
 
-import pansas as pd
+import pandas as pd
 import xarray as xr
 
 class ScotlandCOVID19():
