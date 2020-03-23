@@ -83,3 +83,37 @@ class ScotlandCOVID19():
         counts.columns.name = counts.columns[0]
         counts.columns = [self.date]
         return counts
+    
+class ScotlandCOVID19Results():
+    
+    def __init__(self, results):
+        deaths = {}
+        tests = {}
+        counts = []
+        for result in results:
+            deaths[result.date] = result.deaths
+            tests[result.date] = result.tests
+            counts.append(result.counts)
+        self.deaths = pd.Series(deaths, name='Deaths of confirmed cases')
+        self.deaths.index.name = 'date'
+        self.tests = pd.Series(tests, name='Tests concluded')
+        self.tests.index.name = 'date'
+        self.results = pd.concat([self.deaths, self.tests], axis=1)
+        self.counts = pd.concat(counts,axis=1).transpose()
+        self.counts = self.counts[self.counts.columns.sort_values()]
+        self.counts = self.counts.fillna(0)
+        self.counts.iloc[:, 1] = self.counts.iloc[:, 0] + self.counts.iloc[:, 1]
+        self.counts.drop('Ayrshire & Arran', axis=1, inplace=True)
+        self.counts.rename({self.counts.columns[0]:self.counts.columns[0].replace('\xa0', ' ')},axis=1, inplace=True)
+        self.counts = self.counts.astype('int')
+        self.counts.index.name = 'date'
+        self.counts.columns.name = 'Health board'
+        
+    def __repr__(self):
+        return str(self.results)
+    
+    def to_netcdf(self, file_name: str = 'Scotland_COVID-19.nc'):
+        dataset = xr.Dataset({'counts': self.counts})
+        dataset['deaths'] = xr.DataArray(self.deaths)
+        dataset['tests'] = xr.DataArray(self.tests)
+        dataset.to_netcdf(file_name)
