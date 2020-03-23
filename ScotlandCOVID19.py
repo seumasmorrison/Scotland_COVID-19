@@ -2,7 +2,6 @@
 import urllib
 
 from html2text import html2text
-from dateutil import parser
 from word2number import w2n
 
 import pansas as pd
