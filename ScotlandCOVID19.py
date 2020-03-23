@@ -4,7 +4,9 @@ import urllib
 from html2text import html2text
 from dateutil import parser
 from word2number import w2n
+
 import pansas as pd
+import xarray as xr
 
 class ScotlandCOVID19():
     
@@ -112,7 +114,7 @@ class ScotlandCOVID19Results():
     def __repr__(self):
         return str(self.results)
     
-    def to_netcdf(self, file_name: str = 'Scotland_COVID-19.nc'):
+    def to_netcdf(self, file_name: str = "data/Scotland_COVID-19.nc"):
         dataset = xr.Dataset({'counts': self.counts})
         dataset['deaths'] = xr.DataArray(self.deaths)
         dataset['tests'] = xr.DataArray(self.tests)
