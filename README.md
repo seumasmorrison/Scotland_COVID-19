@@ -1,5 +1,7 @@
 # Scotland COVID-19 data anlysis
 
+![](output/time_series.gif)
+
 Based upon [data published by the Scottish Government](https://www.gov.scot/coronavirus-covid-19/) and [archived copies from the WayBackMachine](https://web.archive.org/web/*/https://www.gov.scot/coronavirus-covid-19/)
 
 [2020 coronavirus pandemic in Scotland on Wikipedia](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_Scotland)
