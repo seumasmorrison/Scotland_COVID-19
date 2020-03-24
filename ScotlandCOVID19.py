@@ -143,3 +143,17 @@ def get_population_for_health_board(health_board_to_council: pd.DataFrame,
                 population_total += int(council_areas.loc[council][1])
         population_health_boards[health_board] = population_total
     return pd.Series(population_health_boards, name='Population mid 2018 ONS estimate')
+
+
+def get_council_areas_and_relationship_to_health_board():
+    tables = pd.read_html('https://en.wikipedia.org/wiki/Subdivisions_of_Scotland')
+    council_areas = tables[2].copy()
+    council_areas.set_index('Council area', inplace=True)
+    return council_areas, tables[4].copy()
+
+
+def get_all_recent_counts(all_results):
+    """include areas with no confirmed cases"""
+    recent_counts = all_results.counts.iloc[-1]
+    zero_counts = pd.Series({'Orkney':0, 'Western Isles':0})
+    return pd.concat([recent_counts, zero_counts])
