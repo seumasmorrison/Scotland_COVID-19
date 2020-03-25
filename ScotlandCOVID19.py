@@ -17,7 +17,11 @@ class ScotlandCOVID19():
         self.date = self.parse_date()
         self.counts = self.get_counts()
         self.deaths = self.get_number_of_deaths()
-        self.tests = self.get_num_tests()
+        try:
+            self.tests = self.get_num_tests()
+        except:
+            print("get_num_tests failed")
+            self.tests = None
         
     def __repr__(self):
         return "Date: " + str(self.date)[:10] + "\nNumbe of tests concluded to date: " + str(self.tests) + \
@@ -56,6 +60,12 @@ class ScotlandCOVID19():
                     substring = line[index + 10: index + 50].split('.')[0][-13:]
                     print(substring)
                     return pd.to_datetime(substring)
+            if 'Scottish test n' in line:
+                index_date = line.find('h test n')
+                print(index_date)
+                if index_date != -1:
+                    return pd.to_datetime(line[index_date+15:index_date+29])
+                
         
     def get_number_of_deaths(self) -> int:
         index = self.html.find('Sadly,')
@@ -67,12 +77,13 @@ class ScotlandCOVID19():
         return 0
     
     def get_num_tests(self) -> int:
-        index = self.html.find('A total of')
-        substring = self.html[index+11:index+21].split()[0]
+        index = self.html.find('total')
+        substring = self.html[index+8:index+21].split()[0]
+        print(substring)
         for char in [';','>']:
             if char in substring:
                 substring = substring.split(char)[1]
-        return int(substring.replace(',',''))
+        return int(substring.replace(',','').replace('</',''))
     
     def get_counts(self) -> pd.DataFrame:
         tables = pd.read_html(self.html)
@@ -97,8 +108,10 @@ class ScotlandCOVID19Results():
             counts.append(result.counts)
         self.deaths = pd.Series(deaths, name='Deaths of confirmed cases')
         self.deaths.index.name = 'date'
+        self.deaths.drop_duplicates(inplace=True)
         self.tests = pd.Series(tests, name='Tests concluded')
         self.tests.index.name = 'date'
+        self.tests.drop_duplicates(inplace=True)
         self.results = pd.concat([self.deaths, self.tests], axis=1)
         self.counts = pd.concat(counts,axis=1).transpose()
         self.counts = self.counts[self.counts.columns.sort_values()]
@@ -109,6 +122,7 @@ class ScotlandCOVID19Results():
         self.counts = self.counts.astype('int')
         self.counts.index.name = 'date'
         self.counts.columns.name = 'Health board'
+        self.counts.drop_duplicates(inplace=True)
         
     def __repr__(self):
         return str(self.results)
@@ -143,6 +157,21 @@ def get_population_for_health_board(health_board_to_council: pd.DataFrame,
                 population_total += int(council_areas.loc[council][1])
         population_health_boards[health_board] = population_total
     return pd.Series(population_health_boards, name='Population mid 2018 ONS estimate')
+
+
+def get_population_and_density_for_health_board_by_council(health_board_to_council: pd.DataFrame,
+                                    council_areas: pd.DataFrame) -> dict:
+    results = {}
+    for health_board, councils in health_board_to_council.iterrows():
+        council_data = []
+        population_total = 0
+        for council in councils:
+            if council is not None:
+                council_data.append(pd.Series({
+                    'population':council_areas.loc[council][1],
+                    'density':council_areas.loc[council][-1]}, name=council))
+        results[health_board] = pd.concat(council_data, axis=1).transpose()
+    return results
 
 
 def get_council_areas_and_relationship_to_health_board():
