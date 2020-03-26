@@ -162,7 +162,9 @@ def get_population_for_health_board(health_board_to_council: pd.DataFrame,
 def get_population_and_density_for_health_board_by_council(health_board_to_council: pd.DataFrame,
                                     council_areas: pd.DataFrame) -> dict:
     results = {}
+    weighted_density = {}
     for health_board, councils in health_board_to_council.iterrows():
+        
         council_data = []
         population_total = 0
         for council in councils:
@@ -171,7 +173,12 @@ def get_population_and_density_for_health_board_by_council(health_board_to_counc
                     'population':council_areas.loc[council][1],
                     'density':council_areas.loc[council][-1]}, name=council))
         results[health_board] = pd.concat(council_data, axis=1).transpose()
-    return results
+        results[health_board][
+            'population_weight'] = results[
+                health_board].population / results[health_board].population.sum()
+        weighted_density[health_board] = (results[
+            health_board].population_weight*results[health_board].density).sum()
+    return results, weighted_density
 
 
 def get_council_areas_and_relationship_to_health_board():
