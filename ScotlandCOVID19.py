@@ -73,7 +73,11 @@ class ScotlandCOVID19():
             return w2n.word_to_num(self.html[index+7:index+20].split(' ')[0])
         index = self.html.find('patients who')
         if index != -1:
-            return int(self.html[index-5:index].split('>')[1])
+            try:
+                substring = self.html[index-5:index].split('>')[1]
+                return int(substring)
+            except:
+                print(substring)
         return 0
     
     def get_num_tests(self) -> int:
