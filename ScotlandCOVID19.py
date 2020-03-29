@@ -1,5 +1,7 @@
 """Class for parsing COVID-19 data from the Scottish Government and archived copies of that page through archive.org"""
+import os
 import urllib
+import site
 
 from html2text import html2text
 from word2number import w2n
@@ -197,3 +199,8 @@ def get_all_recent_counts(all_results):
     recent_counts = all_results.counts.iloc[-1]
     zero_counts = pd.Series({'Orkney':0, 'Western Isles':0})
     return pd.concat([recent_counts, zero_counts])
+
+def write_covid_pth():
+    covid_pth = open(site.getsitepackages()[0]+'/covid.pth', 'w')
+    covid_pth.write(os.sep.join(os.path.realpath(__file__).split(os.sep)[0:-1]))
+    covid_pth.close()
